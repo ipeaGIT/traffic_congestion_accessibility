@@ -9,7 +9,7 @@ library(accessibility)
 
 setDTthreads(percent = 100)
 
-cidades <- c("bel", "bho","bsb","cam","cgr","cur","duq","for","gua","mac","man","nat","poa","rec","rio","sal","sgo","slz","spo")
+cidades <- c("bel", "bho","bsb","cam","cgr","cur","duq","for","goi","gua","mac","man","nat","poa","rec","rio","sal","sgo","slz","spo")
 
 acesso <- function(cidade){
   
@@ -95,7 +95,6 @@ resultado_final$cid <- recode_factor(resultado_final$cid, "bel"="Belém/PA",
                                         "duq"="Duque de Caxias/RJ",
                                         "for"="Fortaleza/CE",
                                         "goi"="Goiânia/GO",
-                                        "rmgoi"="RM de Goiânia/GO",
                                         "gua"="Guarulhos/SP",
                                         "mac"="Maceió/AL",
                                         "man"="Manaus/AM",

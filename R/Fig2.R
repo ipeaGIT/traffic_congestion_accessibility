@@ -11,7 +11,7 @@ library(scales)
 
 setDTthreads(percent = 100)
 
-cidades <- c("bel", "bho","bsb","cam","cgr","cur","duq","for","gua","mac","man","nat","poa","rec","rio","sal","sgo","slz","spo")
+cidades <- c("bel", "bho","bsb","cam","cgr","cur","duq","for","goi","gua","mac","man","nat","poa","rec","rio","sal","sgo","slz","spo")
 
 acesso <- function(cidade){
   
@@ -111,27 +111,26 @@ resultado_final_v3 <- resultado_final_v3 %>%
 resultado_final_v3 <- resultado_final_v3 %>%
   rename("medida" = medida.x)
 
-resultado_final_v3$cid <- recode_factor(resultado_final_v3$cid, "bel"="Bel??m/PA",
+resultado_final_v3$cid <- recode_factor(resultado_final_v3$cid, "bel"="Belém/PA",
                                                                     "bho"="Belo Horizonte/MG",
-                                                                    "bsb"="Bras??lia/DF",
+                                                                    "bsb"="Brasília/DF",
                                                                     "cam"="Campinas/SP",
                                                                     "cgr"="Campo Grande/MS",
                                                                     "cur"="Curitiba/PR",
                                                                     "duq"="Duque de Caxias/RJ",
                                                                     "for"="Fortaleza/CE",
-                                                                    "goi"="Goi??nia/GO",
-                                                                    "rmgoi"="RM de Goi??nia/GO",
+                                                                    "goi"="Goiânia/GO",
                                                                     "gua"="Guarulhos/SP",
-                                                                    "mac"="Macei??/AL",
+                                                                    "mac"="Maceió/AL",
                                                                     "man"="Manaus/AM",
                                                                     "nat"="Natal/RN",
                                                                     "poa"="Porto Alegre/RS",
                                                                     "rec"="Recife/PE",
                                                                     "rio"="Rio de Janeiro/RJ",
                                                                     "sal"="Salvador/BA",
-                                                                    "sgo"="S??o Gon??alo/RJ",
-                                                                    "slz"="S??o Lu??s/MA",
-                                                                    "spo"="S??o Paulo/SP")
+                                                                    "sgo"="São Gonçalo/RJ",
+                                                                    "slz"="São Luís/MA",
+                                                                    "spo"="São Paulo/SP")
 
 
 options(scipen = 999)
