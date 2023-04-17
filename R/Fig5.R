@@ -67,6 +67,7 @@ pop_quintil <- function(cidade, legenda){
     dplyr::select(id_hex, quintil, geometry)%>%
     st_transform(3857)
   
+  
   map_tiles <- readRDS(paste0("//storage6/usuarios/Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
   
   mapa_pop <- ggplot()+
@@ -106,16 +107,24 @@ emp <- function(cidade, legenda){
     dplyr::select(id_hex, T001, geometry)%>%
     st_transform(3857)
   
+  map_tiles <- readRDS(paste0("//storage6/usuarios/Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
+  
   if(cidade!="spo"){
     landuse <- landuse %>%
       mutate(T001 = case_when(T001>4 ~ 4,
                               T001 <4 ~ T001))
+    quebras = c(1,2,3,4)
+    rotulos = c("1","2","3",">4")
+    
   }else{landuse <- landuse %>%
     mutate(T001 = case_when(T001>7 ~ 7,
-                            T001 <7 ~ T001))}
+                            T001 <7 ~ T001))
+  quebras = c(2,4,6)
+  rotulos = c("2","4",">6")
+  }
   
   
-  map_tiles <- readRDS(paste0("//storage6/usuarios/Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
+  
   
   mapa_emp <- ggplot()+
     geom_raster(data = map_tiles, aes(x, y, fill = hex), alpha = 1) +
@@ -128,8 +137,8 @@ emp <- function(cidade, legenda){
       direction = 1
       , option = "viridis"
       #, limits = c(0, 8000)
-      #, breaks = c(0, 2000, 4000, 6000, 8000)
-      #, labels = c("0", "2", "4","6", "+8")
+      , breaks = quebras
+      , labels = rotulos
     ) +
     annotation_scale(location = "br", width_hint = 0.2, pad_y = unit(0, "cm")) +
     coord_sf(datum=NA) + 
@@ -183,6 +192,6 @@ ggdraw(xlim = c(0,135), ylim = c(0,165))+
   draw_label("Empregos", size = 18, fontface = "bold", x=87.5, y=162,fontfamily = "serif")
 
 
-ggsave2(filename="Fig5_congestionamento_v3.png", plot=ggplot2::last_plot(),
+ggsave2(filename="Fig5.png", plot=ggplot2::last_plot(),
         dpi = 300, width = 35, height = 30, units = "cm")
 
