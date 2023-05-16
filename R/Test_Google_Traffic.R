@@ -10,7 +10,7 @@ library(leaflet)
 library(leaflet.providers)
 
 ### Set API Key
-google_key <- "AIzaSyDhPDiKFLNE67o3r4hnwb11eufAT-5HtIw"
+google_key <- ""
 
 sp <- aopdata::read_grid("spo") %>%
  group_by(abbrev_muni) %>%
