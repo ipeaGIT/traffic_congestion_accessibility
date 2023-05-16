@@ -10,20 +10,20 @@ color_palette <- viridisLite::mako(11)
 description_color <- 'grey40'
 cities_colors <- c(
   'São Paulo' = color_palette[2],
-  'Fortaleza' = color_palette[3],
-  'Recife' = color_palette[4],
+  'Fortaleza' = color_palette[7],
+  'Recife' = color_palette[8],
   'Salvador' = color_palette[5],
   'Belo Horizonte' = color_palette[6], 
-  'Rio de Janeiro' = color_palette[7],
-  'Curitiba' = color_palette[8],
+  'Rio de Janeiro' = color_palette[3],
+  'Curitiba' = color_palette[10],
   'Porto Alegre' = color_palette[9],
-  'Brasília' = color_palette[10]
+  'Brasília' = color_palette[4]
 )
 
-cities_rank_acessibilidade <- fread("..\\Desktop/resultado_acessibilidade.csv")%>% 
+cities_rank_acessibilidade <- fread("//storage6/usuarios/Proj_acess_oport/git_diego/traffic_congestion_accessibility/data/resultado_acessibilidade.csv")%>% 
   mutate(ordem=1)
 
-cities_rank_censo <- fread("..\\Desktop/resultado_censo2010.csv") %>% 
+cities_rank_censo <- fread("//storage6/usuarios/Proj_acess_oport/git_diego/traffic_congestion_accessibility/data/resultado_censo2010.csv") %>% 
   mutate(rank = row_number(desc(media_tempo)),
          ordem = 2,
          cidade = case_when(COD_MUN == 2304400 ~ "Fortaleza",
@@ -39,7 +39,7 @@ cities_rank_censo <- fread("..\\Desktop/resultado_censo2010.csv") %>%
 cities_rank_censo <- cities_rank_censo %>%
   select("rank","cidade","ordem")
 
-cities_rank_tomtom <- fread("..\\Desktop/resultado_tomtom.csv") %>% 
+cities_rank_tomtom <- fread("//storage6/usuarios/Proj_acess_oport/git_diego/traffic_congestion_accessibility/data//resultado_tomtom.csv") %>% 
   mutate(ordem=3)
 
 cities_rank_geral <- rbind(cities_rank_acessibilidade,cities_rank_censo,cities_rank_tomtom) #%>%
