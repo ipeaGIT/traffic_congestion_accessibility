@@ -10,7 +10,7 @@ library(leaflet)
 library(leaflet.providers)
 
 ### Set API Key
-google_key <- ""
+#google_key <- ""
 
 
 google_traffic <- function(cidade){
@@ -31,7 +31,12 @@ google_traffic <- function(cidade){
   r_df <- rasterToPoints(r, spatial = TRUE) %>% as.data.frame()
   names(r_df) <- c("value", "x","y")
   
-  temp <- ggplot() +
+  temp <- ggplot()+
+    geom_raster(data = map_tiles, aes(x, y, fill = hex), alpha = 1) +
+    coord_equal() +
+    scale_fill_identity()+
+    # nova escala
+    new_scale_fill() + 
     geom_raster(data = r_df, 
                 aes(x = x, y = y, 
                     fill = as.factor(value))) +
