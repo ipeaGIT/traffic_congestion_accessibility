@@ -369,8 +369,7 @@ ggsave2(filename="Fig4_pt3.png", plot=ggplot2::last_plot(),
         dpi = 300, width = 35, height = 30, units = "cm")
   
   
-
-ggdraw(xlim = c(0,135), ylim = c(0,180))+
+ggdraw(xlim = c(0,135), ylim = c(0,185))+
   draw_plot(cma_man, x=10, y=120, width = 70, height = 46)+
   draw_plot(razao_man, x=62, y=120, width = 35, height = 46)+
   draw_plot(cma_nat, x=1, y=60, width = 90, height = 60)+
