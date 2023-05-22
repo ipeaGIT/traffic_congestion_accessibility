@@ -369,8 +369,8 @@ ggsave2(filename="Fig4_pt3.png", plot=ggplot2::last_plot(),
         dpi = 300, width = 35, height = 30, units = "cm")
   
   
-  
-ggdraw(xlim = c(0,135), ylim = c(0,185))+
+
+ggdraw(xlim = c(0,135), ylim = c(0,180))+
   draw_plot(cma_man, x=10, y=120, width = 70, height = 46)+
   draw_plot(razao_man, x=62, y=120, width = 35, height = 46)+
   draw_plot(cma_nat, x=1, y=60, width = 90, height = 60)+
@@ -380,13 +380,13 @@ ggdraw(xlim = c(0,135), ylim = c(0,185))+
   draw_label("Manaus", size = 18, fontface = "bold", x=97, y=150,angle = 270,fontfamily = "serif")+
   draw_label("Natal", size = 18, fontface = "bold", x=97, y=95,angle = 270,fontfamily = "serif")+
   draw_label("Porto Alegre", size = 18, fontface = "bold", x=97, y=35,angle = 270,fontfamily = "serif")+
-  draw_label("Acessibilidade\n(Fluxo Livre)", size = 18, fontface = "bold", x=33.5, y=180,fontfamily = "serif")+
-  draw_label("Acessibilidade\n(Pico)", size = 18, fontface = "bold", x=55.5, y=180,fontfamily = "serif")+
-  draw_label("Impacto do\ncongestionamento", size = 18, fontface = "bold", x=77, y=180,fontfamily = "serif")
+  draw_label("Acessibilidade\n(Fluxo Livre)", size = 18, fontface = "bold", x=33.5, y=173,fontfamily = "serif")+
+  draw_label("Acessibilidade\n(Pico)", size = 18, fontface = "bold", x=55.5, y=173,fontfamily = "serif")+
+  draw_label("Impacto do\ncongestionamento", size = 18, fontface = "bold", x=79, y=173,fontfamily = "serif")
 
 ggsave2(filename="Fig4_pt4.png", plot=ggplot2::last_plot(),
         dpi = 300, width = 35, height = 30, units = "cm")
-  
+
   
   
   
