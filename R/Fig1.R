@@ -67,7 +67,7 @@ bump_chart_basic <- cities_rank_geral %>%
     'text',
     x = c(1, 2, 3),
     y = c(0.25, 0.25, 0.25),
-    label = c("Acesssibilidade", "Censo 2010","TomTom"),
+    label = c("Acesssibilidade", "Tempo de viagem","Velocidade de tráfego"),
     hjust = c(0, 0.5, 1),
     vjust = 1,
     size = 4,
