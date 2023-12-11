@@ -35,7 +35,7 @@ for (i in (1:length(cidades))){
     select("id_hex","id_num")%>%
     rename(origin = id_num)
   
-  shp <- as.data.table(shp)  
+  shp <- data.table::setDT(shp)  
   
   OD_TI <- merge(OD_TI, shp, by="origin") %>%
     rename(origin_hex = id_hex)
