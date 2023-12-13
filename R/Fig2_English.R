@@ -162,5 +162,5 @@ p + scale_color_manual(name="",
         plot.caption = element_text(size = 8, margin = margin(t=10), color = "grey70", hjust = 0))
 
 
-ggsave(filename="Fig2.png", plot=ggplot2::last_plot(),
+ggsave(filename="C:/Users/b35143921880/Documents/Fig2_English.png", plot=ggplot2::last_plot(),
        dpi = 300, width = 25, height = 20, units = "cm")
