@@ -111,26 +111,26 @@ resultado_final_v3 <- resultado_final_v3 %>%
 resultado_final_v3 <- resultado_final_v3 %>%
   rename("medida" = medida.x)
 
-resultado_final_v3$cid <- recode_factor(resultado_final_v3$cid, "bel"="Belém/PA",
-                                                                    "bho"="Belo Horizonte/MG",
-                                                                    "bsb"="Brasília/DF",
-                                                                    "cam"="Campinas/SP",
-                                                                    "cgr"="Campo Grande/MS",
-                                                                    "cur"="Curitiba/PR",
-                                                                    "duq"="Duque de Caxias/RJ",
-                                                                    "for"="Fortaleza/CE",
-                                                                    "goi"="Goiânia/GO",
-                                                                    "gua"="Guarulhos/SP",
-                                                                    "mac"="Maceió/AL",
-                                                                    "man"="Manaus/AM",
-                                                                    "nat"="Natal/RN",
-                                                                    "poa"="Porto Alegre/RS",
-                                                                    "rec"="Recife/PE",
-                                                                    "rio"="Rio de Janeiro/RJ",
-                                                                    "sal"="Salvador/BA",
-                                                                    "sgo"="São Gonçalo/RJ",
-                                                                    "slz"="São Luís/MA",
-                                                                    "spo"="São Paulo/SP")
+resultado_final_v3$cid <- recode_factor(resultado_final_v3$cid, "bel"="BelÃ©m",
+                                                                    "bho"="Belo Horizonte",
+                                                                    "bsb"="BrasÃ­lia",
+                                                                    "cam"="Campinas",
+                                                                    "cgr"="Campo Grande",
+                                                                    "cur"="Curitiba",
+                                                                    "duq"="Duque de Caxias",
+                                                                    "for"="Fortaleza",
+                                                                    "goi"="GoiÃ¢nia",
+                                                                    "gua"="Guarulhos",
+                                                                    "mac"="MaceiÃ³",
+                                                                    "man"="Manaus",
+                                                                    "nat"="Natal",
+                                                                    "poa"="Porto Alegre",
+                                                                    "rec"="Recife",
+                                                                    "rio"="Rio de Janeiro",
+                                                                    "sal"="Salvador",
+                                                                    "sgo"="SÃ£o GonÃ§alo",
+                                                                    "slz"="SÃ£o LuÃ­s",
+                                                                    "spo"="SÃ£o Paulo")
 
 
 options(scipen = 999)
@@ -149,7 +149,7 @@ p + scale_color_manual(name="",
   #labs(title = "Ratio of reachable job opportunities (peak hour/free flow)",
   #     subtitle = "Interval accessibility measure (15-45 minutes)")+
   theme_minimal() +
-  xlab("Percentual")+
+  xlab("Percentage")+
   theme(axis.title = element_blank(),
         panel.grid.minor = element_blank(),
         legend.background = element_blank(),
