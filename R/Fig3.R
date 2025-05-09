@@ -12,66 +12,66 @@ setDTthreads(percent = 100)
 cidades <- c("bel", "bho","bsb","cam","cgr","cur","duq","for","goi","gua","mac","man","nat","poa","rec","rio","sal","sgo","slz","spo")
 
 acesso <- function(cidade){
-  
-  setwd("//storage6/usuarios/Proj_acess_oport/git_diego/congestionamento/04AM")
-  
+
+  setwd("./Proj_acess_oport/git_diego/congestionamento/04AM")
+
   free <- fread(paste0("OD_TI_", cidade, ".csv")) %>%
     dplyr::select(origin_hex, destination_hex, Total_Time_04AM) %>%
     rename("from_id" = origin_hex,
            "to_id" = destination_hex)
-  
+
   setwd("C:/Users/b35143921880/Downloads/peak")
-  
+
   peak <- fread(paste0("OD_TI_",cidade,"_final.csv")) %>%
     filter(origin_hex %in% free$from_id,
            destination_hex %in% free$to_id) %>%
     dplyr::select(origin_hex, destination_hex, median_morning_peak) %>%
     rename("from_id" = origin_hex,
            "to_id" = destination_hex)
-  
+
   landuse <- aopdata::read_landuse(city=cidade) %>% dplyr::select(id_hex, T001) %>% rename("id" = id_hex)
-  
-  
+
+
   df_04AM <- cumulative_interval(travel_matrix = free,
                                  land_use_data = landuse,
                                  interval = c(15,45),
                                  interval_increment = 1,
                                  opportunity = "T001",
                                  travel_cost = "Total_Time_04AM")
-  
+
   df_04AM <- df_04AM %>% rename("T001_04AM"= T001)
-  
-  
+
+
   df_peak <- cumulative_interval(travel_matrix = peak,
                                  land_use_data = landuse,
                                  interval = c(15,45),
                                  interval_increment = 1,
                                  opportunity = "T001",
                                  travel_cost = "median_morning_peak")
-  
+
   df_peak <- df_peak %>% rename("T001_peak"= T001)
-  
+
   df <- dplyr::left_join(df_04AM, df_peak, by="id")
-  
+
   pop <- aopdata::read_population(city = cidade) %>% filter(P001 >0) %>% dplyr::select(id_hex, P001, R002)
-  
+
   acc <- dplyr::left_join(pop, df, by=c("id_hex"="id")) %>%
     filter(R002 >0)
   acc[is.na(acc)] <- 0
-  
-  
+
+
   acc <- acc %>%
     group_by(R002) %>%
     summarise(mean_CMATT_free = weighted.mean(T001_04AM, P001/1000),
               mean_CMATT_peak = weighted.mean(T001_peak, P001/1000))
-  
+
   acc <- acc %>%
     rename("quintile" = R002)
-    
+
   acc <- acc %>%
     mutate(cid = cidade,
            quintile = as.character(quintile))
-  
+
   return(acc)
 }
 
@@ -86,26 +86,26 @@ resultado_final$quintile <- factor(resultado_final$quintile, levels = c("1","2",
 resultado_final$ratio <- 1-(resultado_final$mean_CMATT_peak/resultado_final$mean_CMATT_free)
 resultado_final$Quintil <- resultado_final$quintile
 
-resultado_final$cid <- recode_factor(resultado_final$cid, "bel"="Belém/PA",
+resultado_final$cid <- recode_factor(resultado_final$cid, "bel"="Bel?m/PA",
                                         "bho"="Belo Horizonte/MG",
-                                        "bsb"="Brasília/DF",
+                                        "bsb"="Bras?lia/DF",
                                         "cam"="Campinas/SP",
                                         "cgr"="Campo Grande/MS",
                                         "cur"="Curitiba/PR",
                                         "duq"="Duque de Caxias/RJ",
                                         "for"="Fortaleza/CE",
-                                        "goi"="Goiânia/GO",
+                                        "goi"="Goi?nia/GO",
                                         "gua"="Guarulhos/SP",
-                                        "mac"="Maceió/AL",
+                                        "mac"="Macei?/AL",
                                         "man"="Manaus/AM",
                                         "nat"="Natal/RN",
                                         "poa"="Porto Alegre/RS",
                                         "rec"="Recife/PE",
                                         "rio"="Rio de Janeiro/RJ",
                                         "sal"="Salvador/BA",
-                                        "sgo"="São Gonçalo/RJ",
-                                        "slz"="São Luís/MA",
-                                        "spo"="São Paulo/SP")
+                                        "sgo"="S?o Gon?alo/RJ",
+                                        "slz"="S?o Lu?s/MA",
+                                        "spo"="S?o Paulo/SP")
 
 
 # resultado_final <- resultado_final %>%
@@ -126,7 +126,7 @@ p <- ggplot(resultado_final, aes(y=reorder(cid, ratio), x=ratio))+
   geom_point(data = media_resultado, aes(y=reorder(cid, media_cong), x=media_cong, group=cid), size=4, shape=3, stroke=2,show.legend = F, colour="grey")+
   geom_line(aes(group=cid), size=2, color="grey")+
   geom_point(aes(color= Quintil), size=4, shape=1, stroke=2)
-  
+
 
 # p1 <- ggplot(media_resultado) +
 #   geom_point(aes(x=media_cong, y=cid ,group=cid), size=4, shape=3, stroke=2)

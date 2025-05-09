@@ -12,7 +12,7 @@ library(ggnewscale)
 library(cowplot)
 library(purrr)
 library(ggsn)
-library(BAMMtools) 
+library(BAMMtools)
 library(stringi)
 library(ggspatial)
 library(accessibility)
@@ -22,105 +22,105 @@ library(pgirmess)
 ####### Mapa Acessibilidade cumulativa intervalo ######
 
 CMA <- function(cidade, legenda, mintempo,maxtempo){
-  
-  setwd("//storage6/usuarios/Proj_acess_oport/git_diego/congestionamento/04AM")
-  
+
+  setwd("./Proj_acess_oport/git_diego/congestionamento/04AM")
+
   landuse <- aopdata::read_landuse(city=cidade) %>% dplyr::select(id_hex, T001) %>% rename("id" = id_hex)
-  
+
   free <- fread(paste0("OD_TI_", cidade, ".csv")) %>%
     dplyr::select(origin_hex, destination_hex, Total_Time_04AM) %>%
     rename("from_id" = origin_hex,
            "to_id" = destination_hex)
-  
+
   df_free <- cumulative_interval(travel_matrix = free,
                                  land_use_data = landuse,
                                  interval = c(mintempo,maxtempo),
                                  interval_increment = 1,
                                  opportunity = "T001",
                                  travel_cost = "Total_Time_04AM")
-  
-  df_free <- df_free %>% 
+
+  df_free <- df_free %>%
     mutate(medida = "Fluxo livre")
-  
+
   geometria <- aopdata::read_grid(city=cidade) %>% dplyr::select(id_hex,geom)
-  
+
   df_geom <- dplyr::left_join(df_free, geometria, by=c("id"="id_hex")) %>% filter(!is.na("T001"), T001> 0)
   df_geom <- st_as_sf(df_geom)%>%
-    st_transform(3857) 
-  
+    st_transform(3857)
+
   #### peak #####
-  
+
   setwd("C:/Users/b35143921880/Downloads/peak")
-  
+
   peak <- fread(paste0("OD_TI_",cidade,"_final.csv")) %>%
     dplyr::select(origin_hex, destination_hex, median_morning_peak) %>%
     rename("from_id" = origin_hex,
            "to_id" = destination_hex)
-  
+
   df_peak <- cumulative_interval(travel_matrix = peak,
                                  land_use_data = landuse,
                                  interval = c(mintempo,maxtempo),
                                  interval_increment = 1,
                                  opportunity = "T001",
                                  travel_cost = "median_morning_peak")
-  
-  
-  df_peak <- df_peak %>% 
+
+
+  df_peak <- df_peak %>%
     mutate(medida = "Pico")
-  
+
   df_peak <- left_join(df_free[,1], df_peak, by="id")
-  
+
   df_geom_peak <- dplyr::left_join(df_peak, geometria, by=c("id"="id_hex")) %>% filter(!is.na("T001"), T001> 0)
   df_geom_peak <- st_as_sf(df_geom_peak)%>%
-    st_transform(3857) 
-  
-  
+    st_transform(3857)
+
+
   df <- rbind(df_geom, df_geom_peak)
-  
+
   df <- df%>%
     mutate(T001_1000 = T001/10000)
-  
+
   df <- df %>%
     sf::st_transform(3857)
-  
-  map_tiles <- readRDS(paste0("//storage6/usuarios/Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
-  
+
+  map_tiles <- readRDS(paste0("./Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
+
   if(cidade == "cgr"){
-    
+
     w=-54.9
     s=-20.8
     e=-54.2
     n=-20.2
-    
+
     test <- bbox2sf(n,s,e,w)
-    
+
     test <- st_transform(test, 3857)
-    
+
     lon = st_coordinates(test)[,1]
     lat = st_coordinates(test)[,2]
-    
+
   }else if(cidade == "man"){
-    
+
     w=-60.2
     s=-3.2
     e=-59.8
     n=-2.85
-    
+
     test <- bbox2sf(n,s,e,w)
-    
+
     test <- st_transform(test, 3857)
-    
+
     lon = st_coordinates(test)[,1]
     lat = st_coordinates(test)[,2]
   }
-  
-  
+
+
   mapa_renda <- ggplot()+
     geom_raster(data = map_tiles, aes(x, y, fill = hex), alpha = 1) +
     coord_equal() +
     scale_fill_identity()+
     # nova escala
-    new_scale_fill() + 
+    new_scale_fill() +
     geom_sf(data=df, aes(fill=T001_1000), color=NA, alpha=1) +
     facet_grid(~medida)+
     viridis::scale_fill_viridis(
@@ -138,114 +138,114 @@ CMA <- function(cidade, legenda, mintempo,maxtempo){
     }else if(legenda == "titulo"){
       theme(legend.title = element_text(size = 14, face="bold",family = "serif"), plot.title = element_text(size = 18, face = "bold", hjust=0.5,family = "serif"), axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank(), rect = element_blank(), axis.title.y=element_blank(),axis.title.x=element_blank(), legend.position = "none", strip.text.x = element_blank())
     }
-  
+
   if(cidade %in% c("cgr", "man")){
     mapa_renda <- mapa_renda + coord_sf(xlim = c(min(lon), max(lon)), ylim=c(min(lat), max(lat)), expand = FALSE)}
-  
+
   return(mapa_renda)
-  
+
 }
 
 ####### Mapa Acessibilidade cumulativa intervalo - hora pico ######
 
 CMA_razao <- function(cidade, legenda, mintempo,maxtempo){
-  
-  setwd("//storage6/usuarios/Proj_acess_oport/git_diego/congestionamento/04AM")
-  
+
+  setwd("./Proj_acess_oport/git_diego/congestionamento/04AM")
+
   landuse <- aopdata::read_landuse(city=cidade) %>% dplyr::select(id_hex, T001) %>% rename("id" = id_hex)
-  
+
   free <- fread(paste0("OD_TI_", cidade, ".csv")) %>%
     dplyr::select(origin_hex, destination_hex, Total_Time_04AM) %>%
     rename("from_id" = origin_hex,
            "to_id" = destination_hex)
-  
+
   df_free <- cumulative_interval(travel_matrix = free,
                                  land_use_data = landuse,
                                  interval = c(mintempo,maxtempo),
                                  interval_increment = 1,
                                  opportunity = "T001",
                                  travel_cost = "Total_Time_04AM")
-  
-  df_free <- df_free %>% 
+
+  df_free <- df_free %>%
     mutate(medida = "Fluxo livre")
-  
+
   geometria <- aopdata::read_grid(city=cidade) %>% dplyr::select(id_hex,geom)
-  
+
   #### peak #####
-  
+
   setwd("C:/Users/b35143921880/Downloads/peak")
-  
+
   peak <- fread(paste0("OD_TI_",cidade,"_final.csv")) %>%
     dplyr::select(origin_hex, destination_hex, median_morning_peak) %>%
     rename("from_id" = origin_hex,
            "to_id" = destination_hex)
-  
+
   df_peak <- cumulative_interval(travel_matrix = peak,
                                  land_use_data = landuse,
                                  interval = c(mintempo,maxtempo),
                                  interval_increment = 1,
                                  opportunity = "T001",
                                  travel_cost = "median_morning_peak")
-  
-  
-  df_peak <- df_peak %>% 
+
+
+  df_peak <- df_peak %>%
     mutate(medida = "Pico")
-  
+
   df_peak <- left_join(df_free[,1], df_peak, by="id")
-  
+
   df_razao <- dplyr::left_join(df_peak, df_free, by="id") %>%
     mutate(T001 = 1-(T001.x/T001.y),
-           medida = "razão") %>%
+           medida = "raz?o") %>%
     select("id", "T001", "medida")
-  
+
   df_razao <- df_razao %>%
     mutate(T001 = case_when(T001 >0.5 ~ 0.5,
                             T001 <0.5 ~ T001))
-  
+
   df_geom_razao <- dplyr::left_join(df_razao, geometria, by=c("id"="id_hex")) %>% filter(!is.na("T001"), T001> 0)
   df_geom_razao <- st_as_sf(df_geom_razao)%>%
     st_transform(3857)
-  
-  
-  map_tiles <- readRDS(paste0("//storage6/usuarios/Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
-  
-  
+
+
+  map_tiles <- readRDS(paste0("./Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
+
+
   if(cidade == "cgr"){
-    
+
     w=-54.9
     s=-20.8
     e=-54.2
     n=-20.2
-    
+
     test <- bbox2sf(n,s,e,w)
-    
+
     test <- st_transform(test, 3857)
-    
+
     lon = st_coordinates(test)[,1]
     lat = st_coordinates(test)[,2]
-    
+
   }else if(cidade == "man"){
-    
+
     w=-60.2
     s=-3.2
     e=-59.8
     n=-2.85
-    
+
     test <- bbox2sf(n,s,e,w)
-    
+
     test <- st_transform(test, 3857)
-    
+
     lon = st_coordinates(test)[,1]
     lat = st_coordinates(test)[,2]
   }
-  
-  
+
+
   mapa_renda <- ggplot()+
     geom_raster(data = map_tiles, aes(x, y, fill = hex), alpha = 1) +
     coord_equal() +
     scale_fill_identity()+
     # nova escala
-    new_scale_fill() + 
+    new_scale_fill() +
     geom_sf(data=df_geom_razao, aes(fill=T001), color=NA, alpha=1) +
     facet_grid(~medida)+
     viridis::scale_fill_viridis(
@@ -256,7 +256,7 @@ CMA_razao <- function(cidade, legenda, mintempo,maxtempo){
       , labels = c("0%", "25%",">50%")
     ) +
     annotation_scale(location = "br", width_hint = 0.2, pad_y = unit(0, "cm")) +
-    coord_sf(datum=NA) + 
+    coord_sf(datum=NA) +
     labs(title = "Acessibilidade",
          fill = "Percentual") +
     if(legenda == "sim"){
@@ -266,12 +266,12 @@ CMA_razao <- function(cidade, legenda, mintempo,maxtempo){
     }else if(legenda == "titulo"){
       theme(legend.title = element_text(size = 14, face="bold",family = "serif"), plot.title = element_text(size = 18, face = "bold", hjust=0.5,family = "serif"), axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank(), rect = element_blank(), axis.title.y=element_blank(),axis.title.x=element_blank(), legend.position = "none", strip.text.x = element_blank())
     }
-  
+
   if(cidade %in% c("cgr", "man")){
     mapa_renda <- mapa_renda + coord_sf(xlim = c(min(lon), max(lon)), ylim=c(min(lat), max(lat)), expand = FALSE)}
-  
+
   return(mapa_renda)
-  
+
 }
 
 ######## Rodando mapas
@@ -319,7 +319,7 @@ ggdraw(xlim = c(0,135), ylim = c(0,125))+
   draw_plot(razao_bel, x=52, y=60, width = 45, height = 60)+
   draw_plot(cma_bho, x=3, y=0, width = 85, height = 56)+
   draw_plot(razao_bho, x=53, y=0, width = 42.5, height = 56)+
-  draw_label("Belém", size = 18, fontface = "bold", x=87, y=90,angle = 270,fontfamily = "serif")+
+  draw_label("Bel?m", size = 18, fontface = "bold", x=87, y=90,angle = 270,fontfamily = "serif")+
   draw_label("Belo Horizonte", size = 18, fontface = "bold", x=87, y=30,angle = 270,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Fluxo Livre)", size = 18, fontface = "bold", x=34.7, y=120,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Pico)", size = 18, fontface = "bold", x=55.3, y=120,fontfamily = "serif")+
@@ -335,7 +335,7 @@ ggdraw(xlim = c(0,135), ylim = c(0,125))+
   draw_plot(razao_bsb, x=63.5, y=45, width = 28.5, height = 37.6)+
   draw_plot(cma_cam, x=-1.5, y=0, width = 75, height = 49)+
   draw_plot(razao_cam, x=59, y=0, width = 37.5, height = 49)+
-  draw_label("Brasília", size = 18, fontface = "bold", x=95, y=66,angle = 270,fontfamily = "serif")+
+  draw_label("Bras?lia", size = 18, fontface = "bold", x=95, y=66,angle = 270,fontfamily = "serif")+
   draw_label("Campinas", size = 18, fontface = "bold", x=95, y=25,angle = 270,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Fluxo Livre)", size = 18, fontface = "bold", x=22.5, y=83.5,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Pico)", size = 18, fontface = "bold", x=49, y=83.5,fontfamily = "serif")+
@@ -368,7 +368,7 @@ ggdraw(xlim = c(0,135), ylim = c(0,125))+
   draw_plot(razao_goi, x=63, y=52, width = 35, height = 46)+
   draw_plot(cma_gua, x=1.5, y=0, width = 83, height = 55)+
   draw_plot(razao_gua, x=60, y=0, width = 41.5, height = 55)+
-  draw_label("Goiânia", size = 18, fontface = "bold", x=94, y=80,angle = 270,fontfamily = "serif")+
+  draw_label("Goi?nia", size = 18, fontface = "bold", x=94, y=80,angle = 270,fontfamily = "serif")+
   draw_label("Guarulhos", size = 18, fontface = "bold", x=94, y=30,angle = 270,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Fluxo Livre)", size = 18, fontface = "bold", x=30, y=100,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Pico)", size = 18, fontface = "bold", x=55, y=100,fontfamily = "serif")+
@@ -386,7 +386,7 @@ ggdraw(xlim = c(0,135), ylim = c(0,125))+
   draw_plot(razao_mac, x=57.7, y=46, width = 50, height = 66)+
   draw_plot(cma_man, x=10, y=0, width = 70, height = 46)+
   draw_plot(razao_man, x=64.5, y=0, width = 35, height = 46)+
-  draw_label("Maceió", size = 18, fontface = "bold", x=97, y=82,angle = 270,fontfamily = "serif")+
+  draw_label("Macei?", size = 18, fontface = "bold", x=97, y=82,angle = 270,fontfamily = "serif")+
   draw_label("Manaus", size = 18, fontface = "bold", x=97, y=27,angle = 270,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Fluxo Livre)", size = 18, fontface = "bold", x=31.5, y=113,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Pico)", size = 18, fontface = "bold", x=56.5, y=113,fontfamily = "serif")+
@@ -440,7 +440,7 @@ ggdraw(xlim = c(0,135), ylim = c(0,125))+
   draw_plot(cma_sgo, x=-4, y=0, width = 83, height = 55.3)+
   draw_plot(razao_sgo, x=65.5, y=0, width = 41.5, height = 55.3)+
   draw_label("Salvador", size = 18, fontface = "bold", x=103.5, y=80,angle = 270,fontfamily = "serif")+
-  draw_label("São Gonçalo", size = 18, fontface = "bold", x=103.5, y=29,angle = 270,fontfamily = "serif")+
+  draw_label("S?o Gon?alo", size = 18, fontface = "bold", x=103.5, y=29,angle = 270,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Fluxo Livre)", size = 18, fontface = "bold", x=22, y=105,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Pico)", size = 18, fontface = "bold", x=54, y=105,fontfamily = "serif")+
   draw_label("Impacto do\ncongestionamento", size = 18, fontface = "bold", x=85.5, y=105,fontfamily = "serif")
@@ -456,7 +456,7 @@ ggsave2(filename="Fig13_pt8_v2.png", plot=ggplot2::last_plot(),
 ggdraw(xlim = c(0,135), ylim = c(0,65))+
   draw_plot(cma_slz, x=0, y=0, width = 80, height = 53.3)+
   draw_plot(razao_slz, x=79, y=0, width = 40, height = 53.3)+
-  draw_label("São Luís", size = 18, fontface = "bold", x=122, y=30,angle = 270,fontfamily = "serif")+
+  draw_label("S?o Lu?s", size = 18, fontface = "bold", x=122, y=30,angle = 270,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Fluxo Livre)", size = 18, fontface = "bold", x=21, y=52,fontfamily = "serif")+
   draw_label("Acessibilidade\n(Pico)", size = 18, fontface = "bold", x=60, y=52,fontfamily = "serif")+
   draw_label("Impacto do\ncongestionamento", size = 18, fontface = "bold", x=98, y=52,fontfamily = "serif")

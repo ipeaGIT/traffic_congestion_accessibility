@@ -9,21 +9,21 @@ library(data.table)
 color_palette <- viridisLite::mako(11)
 description_color <- 'grey40'
 cities_colors <- c(
-  'São Paulo' = color_palette[2],
+  'S?o Paulo' = color_palette[2],
   'Fortaleza' = color_palette[7],
   'Recife' = color_palette[8],
   'Salvador' = color_palette[5],
-  'Belo Horizonte' = color_palette[6], 
+  'Belo Horizonte' = color_palette[6],
   'Rio de Janeiro' = color_palette[3],
   'Curitiba' = color_palette[10],
   'Porto Alegre' = color_palette[9],
-  'Brasília' = color_palette[4]
+  'Bras?lia' = color_palette[4]
 )
 
-cities_rank_acessibilidade <- fread("//storage6/usuarios/Proj_acess_oport/git_diego/traffic_congestion_accessibility/data/resultado_acessibilidade.csv")%>% 
+cities_rank_acessibilidade <- fread("./Proj_acess_oport/git_diego/traffic_congestion_accessibility/data/resultado_acessibilidade.csv")%>%
   mutate(ordem=1)
 
-cities_rank_censo <- fread("//storage6/usuarios/Proj_acess_oport/git_diego/traffic_congestion_accessibility/data/resultado_censo2010.csv") %>% 
+cities_rank_censo <- fread("./Proj_acess_oport/git_diego/traffic_congestion_accessibility/data/resultado_censo2010.csv") %>%
   mutate(rank = row_number(desc(media_tempo)),
          ordem = 2,
          cidade = case_when(COD_MUN == 2304400 ~ "Fortaleza",
@@ -31,21 +31,21 @@ cities_rank_censo <- fread("//storage6/usuarios/Proj_acess_oport/git_diego/traff
                             COD_MUN == 2927408 ~ "Salvador",
                             COD_MUN == 3106200 ~ "Belo Horizonte",
                             COD_MUN == 3304557 ~ "Rio de Janeiro",
-                            COD_MUN == 3550308 ~ "São Paulo",
+                            COD_MUN == 3550308 ~ "S?o Paulo",
                             COD_MUN == 4106902 ~ "Curitiba",
                             COD_MUN == 4314902 ~ "Porto Alegre",
-                            COD_MUN == 5300108 ~ "Brasília"))
+                            COD_MUN == 5300108 ~ "Bras?lia"))
 
 cities_rank_censo <- cities_rank_censo %>%
   select("rank","cidade","ordem")
 
-cities_rank_tomtom <- fread("//storage6/usuarios/Proj_acess_oport/git_diego/traffic_congestion_accessibility/data//resultado_tomtom.csv") %>% 
+cities_rank_tomtom <- fread("./Proj_acess_oport/git_diego/traffic_congestion_accessibility/data//resultado_tomtom.csv") %>%
   mutate(ordem=3)
 
 cities_rank_geral <- rbind(cities_rank_acessibilidade,cities_rank_censo,cities_rank_tomtom) #%>%
 
-bump_chart_basic <- cities_rank_geral %>% 
-  ggplot(aes(ordem, rank, col = cidade)) + 
+bump_chart_basic <- cities_rank_geral %>%
+  ggplot(aes(ordem, rank, col = cidade)) +
   geom_point(shape = '|', stroke = 6) +
   geom_bump(size = 1.5) +
   geom_text(
@@ -67,7 +67,7 @@ bump_chart_basic <- cities_rank_geral %>%
     'text',
     x = c(1, 2, 3),
     y = c(0.25, 0.25, 0.25),
-    label = c("Acesssibilidade", "Tempo de viagem","Velocidade do tráfego"),
+    label = c("Acesssibilidade", "Tempo de viagem","Velocidade do tr?fego"),
     hjust = c(0, 0.5, 1),
     vjust = 1,
     size = 4,
@@ -92,7 +92,7 @@ bump_chart_basic <- cities_rank_geral %>%
   ) +
   labs(
     title = 'Ranking de congestionamento',
-    subtitle = 'Congestionamento medido através de diferentes métodos'
+    subtitle = 'Congestionamento medido atrav?s de diferentes m?todos'
   )
 
 ggsave(filename="Fig1.png", plot=ggplot2::last_plot(),

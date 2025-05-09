@@ -15,7 +15,7 @@ library(leaflet.providers)
 
 google_traffic <- function(cidade){
 
-  map_tiles <- readRDS(paste0("//storage6/usuarios/Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
+  map_tiles <- readRDS(paste0("./Proj_acess_oport/data/acesso_oport/maptiles_crop/2019/mapbox/maptile_crop_mapbox_", cidade,"_2019.rds"))
 
   df <- aopdata::read_grid(cidade) |>
     group_by(abbrev_muni) |>
