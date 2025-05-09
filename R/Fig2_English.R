@@ -55,6 +55,13 @@ resultado_cidade <- resultado_final[
 
 resultado_cidade
 
+table1 <- resultado_cidade |>
+  mutate(avg_congest = round(avg_congest*100,1),
+         avg_peak = round(avg_peak),
+         avg_free = round(avg_free)
+         )
+
+
 
 p <- ggplot(resultado_cidade, aes(y=reorder(cid, avg_congest), x=avg_congest))+
   geom_line(aes(group=cid), size=2, color="grey")+

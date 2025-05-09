@@ -1,5 +1,3 @@
-
-
 library(accessibility)
 library(dplyr)
 library(data.table)
