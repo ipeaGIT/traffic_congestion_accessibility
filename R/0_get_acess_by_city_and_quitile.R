@@ -1,6 +1,3 @@
-# goiania metro and not muni
-# update no texto figures 2 and 3
-
 library(aopdata)
 library(data.table)
 library(dplyr)
