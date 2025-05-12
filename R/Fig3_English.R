@@ -69,12 +69,13 @@ p <- ggplot(resultado_final, aes(y=reorder(cid, ratio), x=ratio))+
 # p1 <- ggplot(media_resultado) +
 #   geom_point(aes(x=media_cong, y=cid ,group=cid), size=4, shape=3, stroke=2)
 
-fig3 <- p +scale_color_viridis_d()+
+fig3 <- p + scale_color_viridis_d()+
   scale_y_discrete(expand = c(.02,0))+
   scale_x_continuous(labels = scales::percent)+
   #labs(title = "Impact of congestion on accessibility to jobs by car",
    #    subtitle = "Interval accessibility measure (15-45 minutes)")+
   theme_minimal() +
+  labs(color= 'Quintile') +
   xlab("Percentage")+
   theme(axis.title = element_blank(),
         panel.grid.minor = element_blank(),
